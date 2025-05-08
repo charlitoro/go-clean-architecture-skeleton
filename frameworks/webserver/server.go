@@ -3,7 +3,6 @@ package webserver
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,24 +11,28 @@ import (
 	"time"
 
 	"github.com/charlitoro/go-clean-architecture-skeleton/adapters/controllers"
+	"github.com/charlitoro/go-clean-architecture-skeleton/frameworks/services"
 	"github.com/charlitoro/go-clean-architecture-skeleton/frameworks/webserver/routes"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type Server struct {
 	router           *gin.Engine
 	port             string
 	statusController *controllers.StatusController
+	logger           *services.Logger
 }
 
 // NewServer creates a new server instance
-func NewServer(port string, statusController *controllers.StatusController) *Server {
+func NewServer(port string, statusController *controllers.StatusController, logger *services.Logger) *Server {
 	router := gin.Default()
 
 	return &Server{
 		router:           router,
 		port:             port,
 		statusController: statusController,
+		logger:           logger,
 	}
 }
 
@@ -63,7 +66,7 @@ func (s *Server) Start() {
 	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go func() {
 		<-sig
-		log.Println("Shutting down server...")
+		s.logger.Info("Shutting down server...")
 
 		// Shutdown signal with grace period of 30 seconds
 		shutdownCtx, _ := context.WithTimeout(serverCtx, 30*time.Second)
@@ -71,27 +74,27 @@ func (s *Server) Start() {
 		go func() {
 			<-shutdownCtx.Done()
 			if shutdownCtx.Err() == context.DeadlineExceeded {
-				log.Fatal("Graceful shutdown timed out.. forcing exit.")
+				s.logger.Fatal("Graceful shutdown timed out.. forcing exit.")
 			}
 		}()
 
 		// Trigger graceful shutdown
 		if err := server.Shutdown(shutdownCtx); err != nil {
-			log.Fatal(err)
+			s.logger.Fatal("Shutdown error", zap.Error(err))
 		}
 		serverStopCtx()
 		wg.Done()
 	}()
 
 	// Start the server
-	log.Printf("Server is running on port %s\n", s.port)
+	s.logger.Info("Server is running", zap.String("port", s.port))
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal(err)
+			s.logger.Fatal("Server error", zap.Error(err))
 		}
 	}()
 
 	// Wait for server context to be stopped
 	wg.Wait()
-	log.Println("Server stopped")
+	s.logger.Info("Server stopped")
 }
