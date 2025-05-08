@@ -1,0 +1,29 @@
+{
+    "name": "go-clean-architecture-lambda",
+    "version": "1.0.0",
+    "description": "Go Clean Architecture for AWS Lambda",
+    "main": "index.js",
+    "scripts": {
+        "deploy": "make deploy",
+        "dev": "make dev-deploy",
+        "prod": "make prod-deploy",
+        "local": "make local",
+        "build": "make build-local",
+        "test": "make test",
+        "format": "make format"
+    },
+    "keywords": [
+        "serverless",
+        "go",
+        "aws",
+        "lambda",
+        "clean-architecture"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "serverless": "^4.11.1",
+        "serverless-go-plugin": "^2.4.1",
+        "serverless-offline": "^12.0.4"
+    }
+}

@@ -1,0 +1,48 @@
+service: go-clean-architecture
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: go1.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    SERVER_PORT: 8080
+    ENVIRONMENT: ${self:provider.stage}
+    DB_HOST: ${env:DB_HOST, 'localhost'}
+    DB_PORT: ${env:DB_PORT, '27017'}
+    DB_USER: ${env:DB_USER, ''}
+    DB_PASSWORD: ${env:DB_PASSWORD, ''}
+    DB_NAME: ${env:DB_NAME, 'app'}
+
+package:
+  individually: true
+
+plugins:
+  - serverless-go-plugin
+  - serverless-offline
+
+custom:
+  go:
+    binDir: bin
+    cmd: main.go
+    buildMode: handler
+
+  serverless-offline:
+    httpPort: 8080
+    useChildProcesses: true
+
+functions:
+  api:
+    handler: main
+    events:
+      - httpApi:
+          path: /health
+          method: get
+    # Uncomment if you need VPC access
+    # vpc:
+    #  securityGroupIds:
+    #    - sg-xxx
+    #  subnetIds:
+    #    - subnet-xxx

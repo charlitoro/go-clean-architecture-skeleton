@@ -141,3 +141,22 @@ fabric.properties
 
 # Cursor AI
 .cursor/
+
+# Serverless directories
+.serverless
+node_modules
+
+# Go binary
+bin
+
+# Environment variables
+.env
+
+# IDE files
+.idea
+.vscode
+
+# Miscellaneous
+*.swp
+*.swo
+.DS_Store
