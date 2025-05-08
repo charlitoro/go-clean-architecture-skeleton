@@ -3,7 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
-	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 // Config holds the application configuration
@@ -22,36 +23,28 @@ type Config struct {
 
 // NewConfig creates a new Config instance with values from environment variables
 func NewConfig() *Config {
+	// Load .env file (only once, safe to call multiple times)
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("No .env file found or error loading .env file")
+	}
+
 	return &Config{
 		// Server configuration with defaults
-		ServerPort:  getEnv("SERVER_PORT", "8080"),
-		Environment: getEnv("ENVIRONMENT", "development"),
+		ServerPort:  getEnv("SERVER_PORT"),
+		Environment: getEnv("ENVIRONMENT"),
 
 		// Database configuration
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     getEnv("DB_PORT", "27017"),
-		DBUser:     getEnv("DB_USER", ""),
-		DBPassword: getEnv("DB_PASSWORD", ""),
-		DBName:     getEnv("DB_NAME", "app"),
+		DBHost:     getEnv("DB_HOST"),
+		DBPort:     getEnv("DB_PORT"),
+		DBUser:     getEnv("DB_USER"),
+		DBPassword: getEnv("DB_PASSWORD"),
+		DBName:     getEnv("DB_NAME"),
 	}
 }
 
-// getEnv retrieves the value of the environment variable or returns a default value
-func getEnv(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultValue
-}
-
-// getEnvAsInt retrieves the value of the environment variable as an int or returns a default value
-func getEnvAsInt(key string, defaultValue int) int {
-	if value, exists := os.LookupEnv(key); exists {
-		if intValue, err := strconv.Atoi(value); err == nil {
-			return intValue
-		}
-	}
-	return defaultValue
+// getEnv retrieves the value of the environment variable
+func getEnv(key string) string {
+	return os.Getenv(key)
 }
 
 // GetDBConnectionString returns the database connection string

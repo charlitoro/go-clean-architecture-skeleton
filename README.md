@@ -1,5 +1,6 @@
 # GO Clean Architecture Skeleton
 
+This project is a skeleton for a Go application following Clean Architecture principles.
 
 ## Project structure
 
@@ -102,28 +103,48 @@ my-go-project/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── README.md
-└── main.go
+├── main.go
+├── Makefile
+└── .env.example
 ```
 
-### Some suggestions
+## Usage
 
-Convenciones de Go:
+### Using the Makefile
 
-* Usa snake_case para nombres de archivos
-* Usa CamelCase para nombres de funciones y tipos
-* Usa nombres cortos y concisos
+- **Build the application:**
+  ```bash
+  make build
+  ```
+- **Run the application:**
+  ```bash
+  make run
+  ```
+- **Clean build artifacts:**
+  ```bash
+  make clean
+  ```
+- **Run tests:**
+  ```bash
+  make test
+  ```
 
-Herramientas recomendadas:
+### Manual usage
 
-* Gin o Echo para webserver
-* GORM o MongoDB driver para bases de datos
-* Viper para configuración
-* Zap o Logrus para logging
-* Testify para testing
+1. **Copy the example file:**
+   ```bash
+   cp .env.example .env
+   ```
+2. **Edit `.env`** with your settings.
+3. **Run your app:**
+   ```bash
+   go run main.go
+   ```
+   or build and run as usual.
 
+### Clean Architecture Aspects
 
-Aspectos de Clean Architecture:
+- All configuration is centralized in the `config` package.
+- Environment variables are loaded automatically for all parts of the app.
 
-* Mantén las dependencias dirigidas hacia adentro
-* Define interfaces en capas internas
-* Separa claramente dominio, casos de uso e infraestructura
+For more details, see the comments in `config/config.go`.
