@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/charlitoro/go-clean-architecture-skeleton/adapters/controllers"
 	"github.com/charlitoro/go-clean-architecture-skeleton/frameworks/services"
 	"github.com/charlitoro/go-clean-architecture-skeleton/frameworks/webserver/routes"
 	"github.com/gin-gonic/gin"
@@ -20,18 +19,16 @@ import (
 type Server struct {
 	router           *gin.Engine
 	port             string
-	statusController *controllers.StatusController
 	logger           *services.Logger
 }
 
 // NewServer creates a new server instance
-func NewServer(port string, statusController *controllers.StatusController, logger *services.Logger) *Server {
+func NewServer(port string, logger *services.Logger) *Server {
 	router := gin.Default()
 
 	return &Server{
 		router:           router,
 		port:             port,
-		statusController: statusController,
 		logger:           logger,
 	}
 }
@@ -39,7 +36,8 @@ func NewServer(port string, statusController *controllers.StatusController, logg
 // SetupRoutes registers all the routes for the application
 func (s *Server) SetupRoutes() {
 	// Setup status routes
-	routes.SetupStatusRoutes(s.router, s.statusController)
+	routes.StatusRoutes(s.router)
+	routes.PostRoutes(s.router)
 
 	// TODO: Register additional routes here
 }

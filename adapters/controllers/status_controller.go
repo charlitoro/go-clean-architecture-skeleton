@@ -13,7 +13,9 @@ type StatusController struct {
 }
 
 // NewStatusController creates a new status controller
-func NewStatusController(healthCheckUseCase *status.HealthCheckUseCase) *StatusController {
+func NewStatusController() *StatusController {
+	healthCheckUseCase := status.NewHealthCheckUseCase()
+
 	return &StatusController{
 		healthCheckUseCase: healthCheckUseCase,
 	}

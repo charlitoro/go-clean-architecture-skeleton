@@ -5,7 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SetupStatusRoutes sets up the status routes
-func SetupStatusRoutes(router *gin.Engine, statusController *controllers.StatusController) {
+// StatusRoutes sets up the status routes
+func StatusRoutes(router *gin.Engine) {
+	statusController := controllers.NewStatusController()
+
 	router.GET("/health", statusController.HealthCheck)
 }
